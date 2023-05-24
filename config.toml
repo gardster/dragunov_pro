@@ -15,7 +15,7 @@ disableKinds = ["taxonomy", "term"]
 
   links = [
       { email = "mailto:lev@dragunov.pro" },
-      { file-regular = { href = "https://drive.google.com/file/d/1-lt32MXWeTdwVry905jlFxF5ayUaYynF/view?usp=share_link", text="CV"}},
+      { file-regular = { href = "https://drive.google.com/file/d/1LLZK8KbmUPjICehtf5LLVGFLF9iCHOq1/view?usp=sharing", text="CV"}},
     # { link = "https://link-to-some-website.com/" },
     # { amazon = "https://www.amazon.com/hz/wishlist/ls/wishlist-id" },
     # { apple = "https://www.apple.com" },
