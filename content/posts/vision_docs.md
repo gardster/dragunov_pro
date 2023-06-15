@@ -40,8 +40,7 @@ In my recent conversations with colleagues who have been recently promoted to st
 ### Definition
 
 Let's begin by clarifying what I mean by the term "vision doc".
-
-A vision doc is a concise document that outlines high-level aspects of a project or initiative, looking ahead to a time frame of 1-3 years in the future. The technical orientation of vision docs can vary, ranging from very technical ones like "We will migrate from Framework A to Framework B" to more product-like descriptions such as  "We will deliver an exceptional user experience."  Usually the technical bias of the vision is expected from software engineering roles.
+A vision doc is a concise document that outlines high-level aspects of a project or initiative, looking ahead to a time frame of 1-3 years. The technical orientation of vision docs can vary, ranging from very technical ones like "We will migrate from a Framework A to a Framework B" to more product-like descriptions such as "We will deliver an exceptional user experience."  Usually the technical bias of the vision is expected from software engineering roles.
 
 As a staff engineer, you possess knowledge of ongoing projects, team/org challenges, and business requirements, allowing you to identify opportunities, align work with business needs, and describe a target state for the future. This is an organisational context and a vision doc is a derivative of this context expressed through an inspiring picture of the future. So you finds some opportunities, aligns work to business needs and describes this as a target state for the future.
 
