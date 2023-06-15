@@ -1,0 +1,42 @@
+name: Deploy Hugo site to hosting
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+concurrency:
+  group: "deploy"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Deployment job
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.110.0'
+          # extended: true
+
+      - name: Build
+        run: hugo --minify
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: |
+            [${{ secrets.SSH_HOST }}]:${{ secrets.SSH_PORT }} ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZl3GZ/4sDdglU3s3NWnEcbqK4Ux4AEb/N2JDypy6qgtQEWQbszBfPdqkU1C8L/MBc3Xil4goiE+uh8of8WbVQX5Mqmbj3cHoqPrlBl5sh566kpVWEjDoP18QhIQ1yyqhVRGsPdnBEpCgrF2wVj9avl34NYNeOw8IdxSR85BHpcG0/hPMg4FK2hgS30j86jXXaGX7k1UcrYY4ujH6kXiVY2uwAFFfrftKi7vHQ2wXGhl7s1pg6LGGI2gyONsPsRfT8baXD31/wjyokpy7J5NxsP3jj94PfSDt05XpdgcEjFzSDlroJ33b9KTh7WtAvHNFycT6Zzh+QJOdgEnTWQVF2iqUeq8oXAPGgHmg4qBUu6FXpTs6HnD1N20/zN9BdxSVUyqhU1RXUWaut4woqWB3FRFyV9/mUBsMF48tRKSukIzqaKYfCeDRB2VKH2H6Zzn0Ub28Vjwl3Yf83JECjFvA11GLJh2AoYVU8RA3qHw0mtye6mlO3QZsSp7Dh1kjZhoM=
+      - name: Deploy to hosing
+        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./public/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/dragunov.pro.static/
