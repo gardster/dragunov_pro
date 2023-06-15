@@ -9,7 +9,7 @@
 
 # To write new post by template
 
-`hugo new --kind post <name>`
+`hugo new posts/<post_name>.md`
 
 
 # Maintenance notes
