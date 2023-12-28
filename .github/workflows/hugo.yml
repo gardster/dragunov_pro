@@ -6,8 +6,14 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+
 concurrency:
-  group: "deploy"
+  group: "pages"
   cancel-in-progress: false
 
 defaults:
@@ -16,27 +22,45 @@ defaults:
 
 jobs:
   # Deployment job
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
-
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: '0.110.0'
           # extended: true
-
-      - name: Build
-        run: hugo --minify
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: |
-            [${{ secrets.SSH_HOST }}]:${{ secrets.SSH_PORT }} ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZl3GZ/4sDdglU3s3NWnEcbqK4Ux4AEb/N2JDypy6qgtQEWQbszBfPdqkU1C8L/MBc3Xil4goiE+uh8of8WbVQX5Mqmbj3cHoqPrlBl5sh566kpVWEjDoP18QhIQ1yyqhVRGsPdnBEpCgrF2wVj9avl34NYNeOw8IdxSR85BHpcG0/hPMg4FK2hgS30j86jXXaGX7k1UcrYY4ujH6kXiVY2uwAFFfrftKi7vHQ2wXGhl7s1pg6LGGI2gyONsPsRfT8baXD31/wjyokpy7J5NxsP3jj94PfSDt05XpdgcEjFzSDlroJ33b9KTh7WtAvHNFycT6Zzh+QJOdgEnTWQVF2iqUeq8oXAPGgHmg4qBUu6FXpTs6HnD1N20/zN9BdxSVUyqhU1RXUWaut4woqWB3FRFyV9/mUBsMF48tRKSukIzqaKYfCeDRB2VKH2H6Zzn0Ub28Vjwl3Yf83JECjFvA11GLJh2AoYVU8RA3qHw0mtye6mlO3QZsSp7Dh1kjZhoM=
-      - name: Deploy to hosing
-        run: rsync -avz -e "ssh -p ${{ secrets.SSH_PORT }}" ./public/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/dragunov.pro.static/
+          submodules: recursive
+          fetch-depth: 0
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
+      - name: Install Node.js dependencies
+        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+      - name: Build with Hugo
+        env:
+          # For maximum backward compatibility with Hugo modules
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
+        run: |
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./public
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
