@@ -117,6 +117,10 @@ menu:
       name: Blog
       url: /posts/
       weight: 10
+    - identifier: blossoms
+      name: "Berlin's blossoms map"
+      url: /blossoms/index.html
+      weight: 20
 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
 pygmentsUseClasses: true
 markup:
