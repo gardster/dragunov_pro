@@ -73,7 +73,7 @@ params:
 
   socialIcons:
     - name: email
-      url: "lev@dragunov.pro"
+      url: "mailto://lev@dragunov.pro"
     - name: linkedin
       url: "https://linkedin.com/in/dragunov"
     - name: telegram
